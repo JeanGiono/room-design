@@ -2,10 +2,13 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北歐奶茶風 - 互動式分層施工圖 (經典定案版)</title>
+    <!-- 增強響應式設計，適配行動裝置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>北歐奶茶風 - 互動式分層施工圖 (動線順暢定案版)</title>
     <style>
+        /* ================= 系統變數定義 ================= */
         :root {
+            /* 空間基底色系 */
             --bg-color: #fcfbf9;
             --wall-color: #5c5046;
             --wet-wall: #8c7f75;
@@ -13,15 +16,17 @@
             --floor-tile: #f0ebe4;
             --orig-beam: #a09388;
             
+            /* 軟裝家具色系 */
             --furn-wood: #e3d1be;
             --furn-wood-dark: #ccb7a1;
-            --furn-kitchen: #d5c1ab;
             --furn-sofa: #dfd5c9; 
             --furn-bed: #fdfcf9;
             --furn-wardrobe: #d9cabd;
+            --furn-kitchen: #c5b5a6; /* 新增廚房變數 */
             --tv-screen: #222222;
             --tv-frame: #111111;
 
+            /* 機電設備與管線色系 */
             --mep-beam: #f1c40f;
             --mep-ac: #3498db;
             --mep-fresh: #27ae60;
@@ -32,6 +37,7 @@
             --color-airflow: #8e44ad;
             --color-exhaust: #c0392b;
 
+            /* 開關插座色系 */
             --elec-socket: #e74c3c;    
             --elec-switch: #f39c12;    
             --elec-network: #8e44ad;   
@@ -39,53 +45,144 @@
             --elec-panel: #c0392b;     
             --elec-led: #f1c40f;       
 
+            /* 天花板高度色系 */
             --ceil-28: #ffffff;
             --ceil-26: #d8c8b8;
             --ceil-24: #e3dcd5;
             
+            /* UI 介面色系 */
             --primary: #8c7f75;
             --text-main: #332b24;
         }
 
+        /* ================= 全域排版與基礎樣式 ================= */
         body {
-            margin: 0; padding: 20px; background-color: #e5dfd8;
+            margin: 0; 
+            padding: 20px; 
+            background-color: #e5dfd8;
             font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh;
         }
 
-        .header { text-align: center; margin-bottom: 20px; color: var(--text-main); }
-        .header h1 { margin: 0 0 5px 0; font-size: 26px; letter-spacing: 2px; }
+        .header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: var(--text-main); 
+        }
+        
+        .header h1 { 
+            margin: 0 0 5px 0; 
+            font-size: 26px; 
+            letter-spacing: 2px; 
+        }
 
-        .tabs-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; width: 100%; max-width: 1200px; }
-        .tab-btn { background-color: #fff; color: var(--primary); border: 2px solid var(--primary); padding: 8px 16px; border-radius: 30px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
-        .tab-btn:hover { background-color: #f4ede6; }
-        .tab-btn.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(140, 127, 117, 0.4); }
-        .tab-btn[data-layer="electrical"] { border-color: #e74c3c; color: #e74c3c; }
-        .tab-btn[data-layer="electrical"].active { background-color: #e74c3c; color: #fff; }
+        /* ================= 導覽分頁列 (Tabs) ================= */
+        .tabs-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 8px; 
+            margin-bottom: 15px; 
+            width: 100%; 
+            max-width: 1200px; 
+        }
+        
+        .tab-btn { 
+            background-color: #fff; 
+            color: var(--primary); 
+            border: 2px solid var(--primary); 
+            /* 增加觸控範圍以優化行動裝置體驗 */
+            padding: 10px 18px; 
+            border-radius: 30px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        .tab-btn:hover, .tab-btn:focus-visible { 
+            background-color: #f4ede6; 
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(140, 127, 117, 0.3);
+        }
+        
+        .tab-btn.active { 
+            background-color: var(--primary); 
+            color: #fff; 
+            box-shadow: 0 4px 10px rgba(140, 127, 117, 0.4); 
+        }
+        
+        .tab-btn[data-layer="electrical"] { 
+            border-color: var(--elec-socket); 
+            color: var(--elec-socket); 
+        }
+        
+        .tab-btn[data-layer="electrical"].active { 
+            background-color: var(--elec-socket); 
+            color: #fff; 
+        }
 
-        .legend-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; max-width: 1200px; min-height: 24px; transition: opacity 0.3s ease; }
+        /* ================= 圖例與畫布容器 ================= */
+        .legend-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 15px; 
+            background: white; 
+            padding: 15px 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+            max-width: 1200px; 
+            min-height: 24px; 
+            transition: opacity 0.3s ease; 
+        }
+        
         .legend-item { display: flex; align-items: center; font-size: 13px; font-weight: 600; color: #444; }
         .legend-box { width: 18px; height: 18px; margin-right: 8px; border-radius: 3px; border: 1px solid #ddd; }
-        .legend-line { width: 20px; height: 4px; margin-right: 8px; border-radius: 2px; }
         .legend-icon { width: 20px; height: 20px; margin-right: 8px; display: flex; justify-content: center; align-items: center; }
 
-        .canvas-container { background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(180, 170, 160, 0.15); width: 100%; max-width: 1200px; box-sizing: border-box; overflow-x: auto; }
-        svg { width: 100%; height: auto; display: block; min-width: 900px; }
+        .canvas-container { 
+            background-color: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 40px rgba(180, 170, 160, 0.15); 
+            width: 100%; 
+            max-width: 1200px; 
+            box-sizing: border-box; 
+            overflow-x: auto;
+            touch-action: pan-x pan-y; /* 優化觸控平移 */
+        }
+        
+        svg { width: 100%; height: auto; display: block; }
 
-        /* 絕對零重疊 CAD 藍圖樣式 */
-        .dim-text { font-size: 15px; font-weight: bold; fill: #a39486; text-anchor: middle; dominant-baseline: middle; }
+        /* ================= SVG 樣式與動畫 ================= */
+        .dim-text { font-size: 15px; font-weight: bold; fill: var(--orig-beam); text-anchor: middle; dominant-baseline: middle; }
         .leader-line { fill: none; stroke: #b0a092; stroke-width: 1.2; stroke-dasharray: 4, 4; opacity: 0.85; }
         .label-text { font-size: 13px; font-weight: bold; dominant-baseline: middle; }
         
-        g[id^="layer-"] { transition: opacity 0.3s ease; }
+        /* 替換原本的 JS 計時器，改用純 CSS 控制圖層的顯示與隱藏 */
+        .svg-layer { 
+            opacity: 0; 
+            visibility: hidden; 
+            pointer-events: none; 
+            transition: opacity 0.4s ease, visibility 0.4s; 
+        }
+        
+        .svg-layer.active { 
+            opacity: 1; 
+            visibility: visible; 
+            pointer-events: auto; 
+        }
+
         @keyframes dash { to { stroke-dashoffset: -20; } }
         .flow-line { stroke-dasharray: 8 6; animation: dash 1.5s linear infinite; }
 
-        @media (prefers-reduced-motion: reduce) {
-            * { animation: none !important; transition: none !important; }
-        }
-
-        /* "綜合全圖" 透明度與層次優化 */
+        /* 綜合全圖模式 (全部圖層啟用，並透過 CSS 調整層級透明度) */
+        .mode-all .svg-layer { opacity: 1; visibility: visible; pointer-events: auto; }
         .mode-all #layer-ceiling .ceil-zone { fill-opacity: 0.08; stroke-opacity: 0.2; }
         .mode-all #layer-mep .pipe-line { opacity: 0.25; }
         .mode-all #layer-mep .flow-line { opacity: 0.8; }
@@ -95,111 +192,115 @@
 </head>
 <body>
 
-    <div class="header">
-        <h1>互動式分層施工圖</h1>
-        <p>🏆 經典小豬豬！</p>
-    </div>
+    <header class="header">
+        <h1>北歐奶茶風 互動式分層施工圖</h1>
+        <p>🏆 最愛小豬豬！</p>
+    </header>
 
-    <!-- Tabs -->
-    <div class="tabs-container" id="tabs">
-        <button class="tab-btn active" data-layer="all">綜合全圖</button>
-        <button class="tab-btn" data-layer="masonry">① 泥作與隔間</button>
-        <button class="tab-btn" data-layer="mep">② 水電空調與排煙 💨</button>
-        <button class="tab-btn" data-layer="ceiling">③ 天花板地形</button>
-        <button class="tab-btn" data-layer="cabinetry">④ 系統櫃 (內建行李櫃)</button>
-        <button class="tab-btn" data-layer="furniture">⑤ 軟裝與家具</button>
-        <button class="tab-btn" data-layer="electrical">⑥ 插座與線燈 ⚡</button>
-    </div>
+    <!-- 導覽頁籤 (添加 ARIA 無障礙屬性) -->
+    <nav class="tabs-container" id="tabs" role="tablist" aria-label="切換施工圖層">
+        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="master-svg" data-layer="all">綜合全圖</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-layer="masonry">① 泥作與隔間</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-layer="mep">② 水電空調與排煙 💨</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-layer="ceiling">③ 天花板地形</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-layer="cabinetry">④ 系統櫃 (內建行李櫃)</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-layer="furniture">⑤ 軟裝與家具</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-layer="electrical">⑥ 插座與線燈 ⚡</button>
+    </nav>
 
-    <div class="legend-container" id="legend"></div>
+    <!-- 圖例顯示區 (動態更新) -->
+    <div class="legend-container" id="legend" aria-live="polite"></div>
 
-    <div class="canvas-container">
-        <svg viewBox="-200 -250 1600 1000" xmlns="http://www.w3.org/2000/svg" id="master-svg" class="mode-all">
+    <main class="canvas-container">
+        <!-- SVG 畫布區域 (壓縮路徑、加入工具提示) -->
+        <svg viewBox="-200 -250 1600 1000" xmlns="http://www.w3.org/2000/svg" id="master-svg" class="mode-all" role="img" aria-label="室內設計配置圖">
             
             <defs>
-                <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><path d="M9,0 L0,3 L9,6 z" fill="#b0a092" /></marker>
-                <marker id="arrow-end" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 z" fill="#b0a092" /></marker>
+                <!-- 箭頭標記壓縮 (共用路徑) -->
+                <path id="arrow-path" d="M0,0 L9,3 L0,6 z" />
+                <path id="arrow-path-start" d="M9,0 L0,3 L9,6 z" />
+                
+                <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto"><use href="#arrow-path-start" fill="#b0a092" /></marker>
+                <marker id="arrow-end" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><use href="#arrow-path" fill="#b0a092" /></marker>
                 <marker id="arrow-drain" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--pipe-drain)" /></marker>
-                <marker id="arrow-ac" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3 L0,6 z" fill="var(--mep-ac)" /></marker>
-                <marker id="arrow-fresh" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3 L0,6 z" fill="var(--mep-fresh)" /></marker>
-                <marker id="arrow-flow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3 L0,6 z" fill="var(--color-airflow)" /></marker>
-                <marker id="arrow-exhaust" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L9,3 L0,6 z" fill="var(--color-exhaust)" /></marker>
+                <marker id="arrow-ac" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><use href="#arrow-path" fill="var(--mep-ac)" /></marker>
+                <marker id="arrow-fresh" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><use href="#arrow-path" fill="var(--mep-fresh)" /></marker>
+                <marker id="arrow-flow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><use href="#arrow-path" fill="var(--color-airflow)" /></marker>
+                <marker id="arrow-exhaust" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><use href="#arrow-path" fill="var(--color-exhaust)" /></marker>
 
-                <pattern id="wood-floor" width="40" height="120" patternUnits="userSpaceOnUse"><rect width="40" height="120" fill="var(--floor-wood)"/><line x1="0" y1="0" x2="0" y2="120" stroke="#ede5db" stroke-width="1"/><line x1="0" y1="60" x2="40" y2="60" stroke="#ede5db" stroke-width="1"/></pattern>
-                <pattern id="tile-floor" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="var(--floor-tile)"/><rect width="40" height="40" fill="none" stroke="#e0d7cd" stroke-width="1"/></pattern>
+                <!-- 背景紋理 -->
+                <pattern id="wood-floor" width="40" height="120" patternUnits="userSpaceOnUse"><rect width="40" height="120" fill="var(--floor-wood)"/><path d="M0,0 L0,120 M0,60 L40,60" stroke="#ede5db" fill="none"/></pattern>
+                <pattern id="tile-floor" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="var(--floor-tile)"/><rect width="40" height="40" fill="none" stroke="#e0d7cd"/></pattern>
                 <pattern id="concrete-pattern" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="var(--wet-wall)" /><circle cx="3" cy="3" r="1" fill="#a09388" /></pattern>
                 <pattern id="orig-beam-pattern" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="20" height="20" fill="none"/><line x1="0" y1="0" x2="0" y2="20" stroke="var(--orig-beam)" stroke-width="2" opacity="0.4"/></pattern>
                 
-                <linearGradient id="tv-glare" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#333;stop-opacity:1" /><stop offset="50%" style="stop-color:#2a2a2a;stop-opacity:1" /><stop offset="100%" style="stop-color:#222;stop-opacity:1" /></linearGradient>
+                <linearGradient id="tv-glare" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#333"/><stop offset="50%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#222"/></linearGradient>
                 <linearGradient id="water-heater" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#e0e0e0"/></linearGradient>
                 <linearGradient id="glass-door" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="rgba(255,255,255,0.2)"/><stop offset="50%" stop-color="rgba(255,255,255,0.6)"/><stop offset="100%" stop-color="rgba(255,255,255,0.2)"/></linearGradient>
 
+                <!-- 電氣與設備符號 -->
                 <g id="sym-recessed"><circle cx="0" cy="0" r="8" fill="#fff" stroke="#e67e22" stroke-width="2"/><circle cx="0" cy="0" r="4" fill="#e67e22"/></g>
-                <g id="sym-ceiling"><circle cx="0" cy="0" r="25" fill="rgba(52, 152, 219, 0.1)" stroke="#3498db" stroke-width="2"/><circle cx="0" cy="0" r="4" fill="#3498db"/></g>
-                <g id="sym-socket"><rect x="-6" y="-6" width="12" height="12" rx="2" fill="var(--elec-socket)" stroke="#fff" stroke-width="1"/><line x1="-2" y1="-2" x2="-2" y2="2" stroke="#fff" stroke-width="1.5" /><line x1="2" y1="-2" x2="2" y2="2" stroke="#fff" stroke-width="1.5" /></g>
+                <g id="sym-ceiling"><circle cx="0" cy="0" r="25" fill="rgba(52, 152, 219, 0.1)" stroke="var(--mep-ac)" stroke-width="2"/><circle cx="0" cy="0" r="4" fill="var(--mep-ac)"/></g>
+                <g id="sym-socket"><rect x="-6" y="-6" width="12" height="12" rx="2" fill="var(--elec-socket)" stroke="#fff" stroke-width="1"/><path d="M-2,-2 L-2,2 M2,-2 L2,2" stroke="#fff" stroke-width="1.5" fill="none"/></g>
                 <g id="sym-switch"><circle cx="0" cy="0" r="7" fill="var(--elec-switch)" stroke="#fff" stroke-width="1.5"/><circle cx="0" cy="0" r="2" fill="#fff"/></g>
                 <g id="sym-network"><polygon points="0,-7 7,5 -7,5" fill="var(--elec-network)" stroke="#fff" stroke-width="1"/></g>
                 <g id="sym-water"><path d="M0,-6 Q5,0 5,4 A5,5 0 0 1 -5,4 Q-5,0 0,-6 Z" fill="var(--elec-water)" stroke="#fff" stroke-width="1"/></g>
                 <g id="sym-camera"><rect x="-7" y="-5" width="14" height="10" rx="2" fill="var(--elec-network)" stroke="#fff" stroke-width="1"/><circle cx="0" cy="0" r="3" fill="#fff" /></g>
-                <g id="sym-panel"><rect x="-8" y="-12" width="16" height="24" fill="#fff" stroke="var(--elec-panel)" stroke-width="2" rx="1"/><line x1="-8" y1="-12" x2="8" y2="12" stroke="var(--elec-panel)" stroke-width="1.5"/><line x1="8" y1="-12" x2="-8" y2="12" stroke="var(--elec-panel)" stroke-width="1.5"/></g>
-                <g id="sym-heater"><rect x="-10" y="-10" width="20" height="20" fill="none" stroke="var(--elec-socket)" stroke-width="1.5"/><circle cx="0" cy="0" r="5" fill="var(--elec-socket)"/><path d="M-6,-6 L6,6 M6,-6 L-6,6" stroke="var(--elec-socket)" stroke-width="1.5"/></g>
+                <g id="sym-panel"><rect x="-8" y="-12" width="16" height="24" fill="#fff" stroke="var(--elec-panel)" stroke-width="2" rx="1"/><path d="M-8,-12 L8,12 M8,-12 L-8,12" stroke="var(--elec-panel)" stroke-width="1.5" fill="none"/></g>
+                <g id="sym-heater"><rect x="-10" y="-10" width="20" height="20" fill="none" stroke="var(--elec-socket)" stroke-width="1.5"/><circle cx="0" cy="0" r="5" fill="var(--elec-socket)"/><path d="M-6,-6 L6,6 M6,-6 L-6,6" stroke="var(--elec-socket)" stroke-width="1.5" fill="none"/></g>
             </defs>
 
-            <!-- ================= 固定底層 ================= -->
+            <!-- ================= 固定底層 (全域常駐) ================= -->
             <g id="layer-base">
                 <polygon points="0,40 40,0 94,0 94,400 40,400 0,360" fill="#d1cfcb" />
                 <rect x="94" y="0" width="786" height="400" fill="url(#wood-floor)" />
                 <rect x="880" y="0" width="230" height="400" fill="url(#tile-floor)" />
 
+                <!-- 尺寸標示線 -->
                 <g stroke="#b0a092" stroke-width="2">
-                    <line x1="94" y1="-40" x2="394" y2="-40" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+                    <path d="M 94,-40 L 394,-40 M 394,-40 L 880,-40 M 880,-40 L 1110,-40 M 94,440 L 1110,440" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
                     <text x="244" y="-50" class="dim-text" stroke="none">3m</text>
-                    <line x1="394" y1="-40" x2="880" y2="-40" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
                     <text x="637" y="-50" class="dim-text" stroke="none">4.86m</text>
-                    <line x1="880" y1="-40" x2="1110" y2="-40" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
                     <text x="995" y="-50" class="dim-text" stroke="none">2.3m</text>
-                    <line x1="94" y1="-50" x2="94" y2="0" stroke-width="1"/><line x1="394" y1="-50" x2="394" y2="0" stroke-width="1"/><line x1="880" y1="-50" x2="880" y2="0" stroke-width="1"/><line x1="1110" y1="-50" x2="1110" y2="0" stroke-width="1"/>
-
-                    <line x1="94" y1="440" x2="1110" y2="440" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
                     <text x="602" y="430" class="dim-text" stroke="none">室內總長 10.16m</text>
-                    <line x1="94" y1="400" x2="94" y2="450" stroke-width="1"/><line x1="1110" y1="400" x2="1110" y2="450" stroke-width="1"/>
+                    <!-- 尺寸輔助短線 -->
+                    <path d="M 94,-50 L 94,0 M 394,-50 L 394,0 M 880,-50 L 880,0 M 1110,-50 L 1110,0 M 94,400 L 94,450 M 1110,400 L 1110,450" stroke-width="1" />
                 </g>
             </g>
 
             <!-- ================= ① 泥作與結構層 ================= -->
-            <g id="layer-masonry">
+            <g id="layer-masonry" class="svg-layer active">
                 <g fill="var(--wall-color)">
-                    <!-- 陽台落地窗 -->
-                    <rect x="90" y="0" width="4" height="20" />
+                    <!-- 陽台氣密落地玻璃拉門 -->
+                    <path d="M90,0 h4 v20 h-4 z M90,250 h4 v150 h-4 z" />
                     <rect x="88" y="20" width="8" height="230" fill="#e0e0e0" />
                     <rect x="88" y="20" width="4" height="115" fill="url(#glass-door)" stroke="#b0a092" stroke-width="1" />
                     <rect x="92" y="135" width="4" height="115" fill="url(#glass-door)" stroke="#b0a092" stroke-width="1" />
-                    <rect x="90" y="250" width="4" height="150" />
 
                     <!-- 長虹玻璃連動拉門 -->
                     <rect x="392" y="0" width="6" height="400" fill="#e0e0e0" /> 
                     <rect x="390" y="0" width="4" height="130" fill="url(#glass-door)" stroke="#b0a092" stroke-width="1" />
                     <rect x="394" y="125" width="4" height="130" fill="url(#glass-door)" stroke="#b0a092" stroke-width="1" />
                     
-                    <rect x="878" y="0" width="4" height="80" /> 
-                    <rect x="878" y="150" width="4" height="250" />
-                    <rect x="94" y="-4" width="1020" height="4" />
-                    <rect x="94" y="400" width="926" height="4" />
-                    <rect x="1110" y="0" width="4" height="310" />
+                    <!-- 實體隔間牆 -->
+                    <path d="M878,0 h4 v80 h-4 z M878,150 h4 v250 h-4 z M94,-4 h1020 v4 h-1020 z M94,400 h926 v4 h-926 z M1110,0 h4 v310 h-4 z" />
                 </g>
                 <rect x="94" y="350" width="1016" height="50" fill="url(#orig-beam-pattern)" class="orig-beam" />
                 <line x1="94" y1="350" x2="1110" y2="350" stroke="var(--orig-beam)" stroke-width="2" stroke-dasharray="8,4" class="orig-beam" />
 
+                <!-- 15cm 灌漿牆 -->
                 <rect x="882" y="150" width="228" height="15" fill="url(#concrete-pattern)" stroke="var(--wall-color)" stroke-width="1.5" />
                 
-                <!-- 浴室半高矮牆+玻璃 (移除原先的淋浴玻璃門) -->
+                <!-- 浴室半高矮牆+玻璃 (無淋浴玻璃門) -->
                 <rect x="1030" y="0" width="80" height="150" fill="rgba(240, 243, 245, 0.5)" />
                 <rect x="1024" y="0" width="12" height="100" fill="#f0ebe4" stroke="#c4bdb6" stroke-width="2" rx="2" />
-                <rect x="1028" y="0" width="4" height="100" fill="url(#glass-door)" stroke="#3498db" stroke-width="1" opacity="0.8" />
+                <rect x="1028" y="0" width="4" height="100" fill="url(#glass-door)" stroke="var(--mep-ac)" stroke-width="1" opacity="0.8" />
                 
+                <!-- 懸吊拉門 -->
                 <rect x="882" y="76" width="70" height="4" fill="#a09388" />
                 <path d="M 882 78 L 860 78" stroke="#a09388" stroke-width="2" marker-start="url(#arrow-start)" fill="none"/>
                 
+                <!-- 大門開啟軌跡 -->
                 <g fill="none" stroke="#bea99a" stroke-width="2">
                     <path d="M 1020 400 A 90 90 0 0 1 1110 310" stroke-dasharray="5,5" />
                     <line x1="1110" y1="400" x2="1110" y2="310" stroke-width="4" stroke-linecap="round" />
@@ -207,42 +308,45 @@
             </g>
 
             <!-- ================= ② 水電空調與排氣層 ================= -->
-            <g id="layer-mep">
+            <g id="layer-mep" class="svg-layer active">
                 <rect x="1060" y="0" width="50" height="40" fill="#636e72" />
                 <rect x="910" y="20" width="90" height="45" fill="url(#water-heater)" stroke="var(--pipe-hot)" stroke-width="2" rx="4" />
                 <line x1="910" y1="42.5" x2="1000" y2="42.5" stroke="#ccc" stroke-width="1" />
                 <circle cx="985" cy="30" r="4" fill="var(--pipe-hot)" />
                 <circle cx="985" cy="55" r="4" fill="var(--pipe-cold)" />
 
-                <g class="pipe-line">
-                    <path d="M 905 30 L 1060 30" stroke="var(--pipe-drain)" stroke-width="5" fill="none" marker-end="url(#arrow-drain)" />
-                    <path d="M 920 180 L 1080 180 L 1080 40" stroke="var(--pipe-drain)" stroke-width="4" fill="none" marker-end="url(#arrow-drain)" />
-                    <path d="M 1060 15 L 1030 15 L 1030 55 L 985 55" stroke="var(--pipe-cold)" stroke-width="2" fill="none" stroke-linejoin="round" />
-                    <path d="M 1030 15 L 1030 180 L 940 180" stroke="var(--pipe-cold)" stroke-width="2" fill="none" stroke-linejoin="round" />
-                    <path d="M 1030 180 L 1030 380 L 50 380 L 50 315" stroke="var(--pipe-cold)" stroke-width="2" fill="none" stroke-linejoin="round" stroke-dasharray="8 4" />
-                    <path d="M 985 30 L 1045 30 L 1045 170 L 920 170" stroke="var(--pipe-hot)" stroke-width="2" fill="none" stroke-linejoin="round" />
-                    <path d="M 47 380 L 94 340 L 880 340 L 1060 40" stroke="var(--pipe-acd)" stroke-width="3" stroke-dasharray="6,4" fill="none" />
+                <!-- 合併水電管線路徑 -->
+                <g class="pipe-line" fill="none" stroke-linejoin="round">
+                    <path d="M 905 30 L 1060 30 M 920 180 L 1080 180 L 1080 40" stroke="var(--pipe-drain)" stroke-width="4" marker-end="url(#arrow-drain)" />
+                    <path d="M 1060 15 L 1030 15 L 1030 55 L 985 55 M 1030 15 L 1030 180 L 940 180" stroke="var(--pipe-cold)" stroke-width="2" />
+                    <path d="M 1030 180 L 1030 380 L 50 380 L 50 315" stroke="var(--pipe-cold)" stroke-width="2" stroke-dasharray="8 4" />
+                    <path d="M 985 30 L 1045 30 L 1045 170 L 920 170" stroke="var(--pipe-hot)" stroke-width="2" />
+                    <path d="M 47 380 L 94 340 L 880 340 L 1060 40" stroke="var(--pipe-acd)" stroke-width="3" stroke-dasharray="6,4" />
                 </g>
                 
+                <!-- 空調設備與管線 -->
                 <rect x="15" y="190" width="60" height="70" fill="rgba(52, 152, 219, 0.2)" stroke="var(--mep-ac)" stroke-width="2" stroke-dasharray="4,2" rx="3" />
                 <rect x="180" y="340" width="90" height="20" fill="rgba(52, 152, 219, 0.4)" stroke="var(--mep-ac)" stroke-width="2" rx="2" />
                 <rect x="490" y="340" width="90" height="20" fill="rgba(52, 152, 219, 0.4)" stroke="var(--mep-ac)" stroke-width="2" rx="2" />
                 <rect x="15" y="330" width="60" height="40" fill="rgba(39, 174, 96, 0.2)" stroke="var(--mep-fresh)" stroke-width="2" stroke-dasharray="4,2" rx="3" />
+                
+                <!-- 新風機管線合併 -->
                 <path d="M 75 350 L 550 350" stroke="var(--mep-fresh)" stroke-width="5" fill="none" opacity="0.6" />
+                <g fill="none" marker-end="url(#arrow-ac)" opacity="0.7">
+                    <path d="M 225 330 L 225 250" stroke="var(--mep-ac)" stroke-width="2" stroke-dasharray="5 3" />
+                    <path d="M 535 330 Q 535 150 700 150" stroke="var(--mep-ac)" stroke-width="2" stroke-dasharray="10 5" />
+                </g>
 
-                <!-- 氣流方向 -->
-                <path d="M 225 330 L 225 250" stroke="var(--mep-ac)" stroke-width="2" fill="none" marker-end="url(#arrow-ac)" stroke-dasharray="5 3" opacity="0.7" />
-                <path d="M 535 330 Q 535 150 700 150" stroke="var(--mep-ac)" stroke-width="2" fill="none" marker-end="url(#arrow-ac)" stroke-dasharray="10 5" opacity="0.7" />
                 <rect x="295" y="347" width="40" height="6" fill="#fff" stroke="var(--mep-fresh)" stroke-width="1" />
-                <path d="M 315 340 L 315 300" stroke="var(--mep-fresh)" stroke-width="2" fill="none" marker-end="url(#arrow-fresh)" />
                 <rect x="400" y="347" width="40" height="6" fill="#fff" stroke="var(--mep-fresh)" stroke-width="1" />
-                <path d="M 420 340 L 420 300" stroke="var(--mep-fresh)" stroke-width="2" fill="none" marker-end="url(#arrow-fresh)" />
+                <path d="M 315 340 L 315 300 M 420 340 L 420 300" stroke="var(--mep-fresh)" stroke-width="2" fill="none" marker-end="url(#arrow-fresh)" />
 
-                <!-- 排氣設備 -->
-                <rect x="965" y="55" width="30" height="30" fill="var(--color-exhaust)" rx="4" />
-                <path d="M 995 70 L 1125 70" stroke="var(--color-exhaust)" stroke-width="3" fill="none" marker-end="url(#arrow-exhaust)" />
-                <rect x="1040" y="155" width="60" height="30" fill="var(--color-exhaust)" rx="2" />
-                <path d="M 1070 155 L 1070 125 L 1125 125" stroke="var(--color-exhaust)" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow-exhaust)" />
+                <!-- 排氣設備合併 -->
+                <g fill="var(--color-exhaust)">
+                    <rect x="965" y="55" width="30" height="30" rx="4" />
+                    <rect x="1040" y="155" width="60" height="30" rx="2" />
+                </g>
+                <path d="M 995 70 L 1125 70 M 1070 155 L 1070 125 L 1125 125" stroke="var(--color-exhaust)" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow-exhaust)" />
 
                 <!-- 全室正壓換氣動線 -->
                 <g stroke="var(--color-airflow)" stroke-width="2.5" fill="none" opacity="0.8" class="flow-line">
@@ -255,72 +359,85 @@
             </g>
 
             <!-- ================= ③ 天花板與照明層 ================= -->
-            <g id="layer-ceiling">
+            <g id="layer-ceiling" class="svg-layer active">
                 <rect x="94" y="0" width="786" height="320" fill="var(--ceil-28)" stroke="#e0e0e0" stroke-width="1" class="ceil-zone" opacity="0.8"/>
                 <rect x="880" y="0" width="230" height="400" fill="url(#hatch-24)" stroke="#b8b0a6" stroke-width="2" class="ceil-zone" opacity="0.8"/>
                 <rect x="94" y="320" width="786" height="80" fill="var(--ceil-26)" stroke="#cbbab5" stroke-width="2" class="ceil-zone" opacity="0.9"/>
                 
-                <use href="#sym-ceiling" x="244" y="160" />
-                <use href="#sym-ceiling" x="517" y="160" />
-                <use href="#sym-recessed" x="930" y="40" /> <use href="#sym-recessed" x="990" y="40" />
-                <use href="#sym-recessed" x="980" y="200" /> <use href="#sym-recessed" x="1050" y="200" />
-                <use href="#sym-recessed" x="980" y="280" /> <use href="#sym-recessed" x="1050" y="280" />
-                
-                <path d="M 94 315 L 880 315" fill="none" stroke="#f1c40f" stroke-width="4" stroke-dasharray="6,4" />
+                <!-- 照明燈具 (支援滑鼠懸停 tooltip 提示) -->
+                <use href="#sym-ceiling" x="244" y="160"><title>主吸頂燈 (客廳)</title></use>
+                <use href="#sym-ceiling" x="517" y="160"><title>主吸頂燈 (臥室)</title></use>
+                <g>
+                    <use href="#sym-recessed" x="930" y="40" /> <use href="#sym-recessed" x="990" y="40" />
+                    <use href="#sym-recessed" x="980" y="200" /> <use href="#sym-recessed" x="1050" y="200" />
+                    <use href="#sym-recessed" x="980" y="280" /> <use href="#sym-recessed" x="1050" y="280" />
+                </g>
+                <path d="M 94 315 L 880 315" fill="none" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="6,4" />
             </g>
 
-            <!-- ================= ④ 系統櫃與設備層 ================= -->
-            <g id="layer-cabinetry">
+            <!-- ================= ④ 系統櫃與設備層 (含內建行李櫃) ================= -->
+            <g id="layer-cabinetry" class="svg-layer active">
+                <!-- 衛浴設備 -->
                 <rect x="890" y="0" width="30" height="15" fill="#fff" stroke="#ccc" rx="3" />
                 <ellipse cx="905" cy="30" rx="15" ry="22" fill="#fff" stroke="#ccc" />
                 <rect x="940" y="0" width="70" height="50" fill="#fcfaf7" stroke="#ccc"/>
                 <ellipse cx="975" cy="25" rx="20" ry="12" fill="#fff" stroke="#ccc" />
                 <circle cx="1070" cy="75" r="12" stroke="#bbb" fill="none" />
                 
+                <!-- 廚房設備合併 -->
                 <rect x="940" y="165" width="170" height="60" fill="var(--furn-kitchen)" />
                 <rect x="910" y="165" width="30" height="60" fill="none" stroke="var(--furn-kitchen)" stroke-width="2" stroke-dasharray="4,2" />
-                <rect x="945" y="170" width="55" height="50" fill="#f5f2ed" rx="3" />
-                <rect x="950" y="175" width="45" height="40" fill="#e8e5e0" rx="2" />
-                <rect x="1040" y="170" width="60" height="50" fill="#fcfaf7" rx="2" />
+                <g fill="#fcfaf7">
+                    <rect x="945" y="170" width="55" height="50" fill="#f5f2ed" rx="3" />
+                    <rect x="950" y="175" width="45" height="40" fill="#e8e5e0" rx="2" />
+                    <rect x="1040" y="170" width="60" height="50" rx="2" />
+                </g>
                 <circle cx="1055" cy="195" r="10" fill="none" stroke="#aaa" stroke-width="2" />
                 <circle cx="1085" cy="195" r="10" fill="none" stroke="#aaa" stroke-width="2" />
 
-                <!-- 系統大衣櫃 (內含隱藏行李櫃) -->
+                <!-- 🌟 系統大衣櫃 (不佔走道，內建行李櫃) -->
                 <rect x="94" y="330" width="290" height="70" fill="var(--furn-wardrobe)" stroke="#cbbab5" stroke-width="2"/>
                 <line x1="164" y1="330" x2="164" y2="400" stroke="#cbbab5" stroke-width="2" stroke-dasharray="4,2"/>
-                <rect x="104" y="340" width="50" height="50" fill="none" stroke="#fff" stroke-dasharray="4,2" stroke-width="1.5"/>
+                <!-- 行李箱虛線示意 -->
+                <rect x="104" y="340" width="50" height="50" fill="none" stroke="#fff" stroke-dasharray="4,2" stroke-width="1.5"><title>內建大型行李箱櫃</title></rect>
                 
                 <rect x="154" y="0" width="160" height="45" fill="var(--furn-wood-dark)" />
                 <rect x="410" y="0" width="210" height="30" fill="var(--furn-wood-dark)" />
-                <rect x="445" y="360" width="180" height="40" fill="var(--furn-wood)" />
-                <line x1="505" y1="360" x2="505" y2="400" stroke="#bda38b" stroke-width="1" />
-                <line x1="565" y1="360" x2="565" y2="400" stroke="#bda38b" stroke-width="1" />
+                
+                <g fill="var(--furn-wood)">
+                    <rect x="445" y="360" width="180" height="40" />
+                    <rect x="400" y="360" width="45" height="40" />
+                    <rect x="950" y="360" width="70" height="40" />
+                </g>
+                <path d="M 505,360 L 505,400 M 565,360 L 565,400" stroke="#bda38b" stroke-width="1" />
 
+                <!-- TV Zone -->
                 <g transform="translate(462.5, 277)">
                     <rect x="50" y="80" width="45" height="3" fill="#333" />
                     <rect x="0" y="0" width="145" height="83" fill="var(--tv-screen)" stroke="var(--tv-frame)" stroke-width="1" rx="1" />
                     <rect x="1" y="1" width="143" height="81" fill="url(#tv-glare)" rx="0.5" />
                 </g>
-
                 <rect x="480" y="365" width="110" height="8" fill="#1a1a1a" rx="3" />
                 <rect x="485" y="367" width="100" height="4" fill="#333" rx="2" />
-                <rect x="400" y="360" width="45" height="40" fill="var(--furn-wood)" />
+                
                 <rect x="880" y="360" width="70" height="40" fill="var(--furn-wood-dark)" />
-                <rect x="950" y="360" width="70" height="40" fill="var(--furn-wood)" />
+                <rect x="955" y="365" width="35" height="30" fill="#e8dcca" rx="3" /> 
             </g>
 
             <!-- ================= ⑤ 軟裝與家具層 ================= -->
-            <g id="layer-furniture">
+            <g id="layer-furniture" class="svg-layer active">
                 <rect x="94" y="0" width="60" height="45" fill="none" />
                 <circle cx="124" cy="65" r="15" fill="var(--furn-wood-dark)" />
                 <rect x="154" y="45" width="160" height="200" fill="#ede2d5" rx="4" />
                 <rect x="154" y="80" width="160" height="165" fill="var(--furn-bed)" rx="4" />
 
+                <!-- 沙發床組 -->
                 <rect x="410" y="30" width="210" height="150" fill="none" stroke="var(--furn-sofa)" stroke-width="2" stroke-dasharray="8,5" />
                 <rect x="410" y="30" width="210" height="90" fill="var(--furn-sofa)" rx="8" />
                 <rect x="425" y="30" width="180" height="18" fill="#d0c6b8" rx="5" />
                 <circle cx="517" cy="215" r="28" fill="#fcfaf7" stroke="#e0d5c8" stroke-width="2" />
 
+                <!-- 桌椅 -->
                 <g transform="translate(670, 20)">
                     <rect x="0" y="0" width="63" height="80" fill="#f0e2d1" />
                     <rect x="63" y="0" width="26" height="80" fill="var(--furn-wood)" />
@@ -328,282 +445,167 @@
                 <rect x="630" y="42" width="30" height="35" fill="var(--furn-sofa)" rx="5" />
                 <rect x="770" y="42" width="30" height="35" fill="var(--furn-sofa)" rx="5" />
 
+                <!-- 陽台與電器 -->
                 <rect x="15" y="280" width="65" height="70" fill="#f0ebe6" stroke="#ccc" rx="4" />
                 <circle cx="47.5" cy="315" r="20" fill="#d4cec8" />
-                <rect x="820" y="336" width="56" height="64" fill="#bdc3c7" rx="2" />
+                <rect x="820" y="336" width="56" height="64" fill="#bdc3c7" stroke="#7f8c8d" rx="2" />
             </g>
 
             <!-- ================= ⑥ 插座與弱電層 ================= -->
-            <g id="layer-electrical">
-                <path d="M 154 45 L 314 45" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="4,2" fill="none" /> 
-                <path d="M 164 332 L 384 332" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="4,2" fill="none" /> 
-                <path d="M 445 358 L 625 358" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="4,2" fill="none" /> 
-                <path d="M 950 358 L 1020 358" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="4,2" fill="none" /> 
-                <path d="M 940 165 L 1010 165" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="4,2" fill="none" />
+            <g id="layer-electrical" class="svg-layer active">
+                <!-- 將多條 LED 線段合併為單一路徑，大幅減少 DOM 節點 -->
+                <path d="M 154 45 L 314 45 M 164 332 L 384 332 M 445 358 L 625 358 M 950 358 L 1020 358 M 940 165 L 1010 165" stroke="var(--elec-led)" stroke-width="4" stroke-dasharray="4,2" fill="none" /> 
 
-                <use href="#sym-panel" x="985" y="400"/>
-                <use href="#sym-switch" x="1090" y="380"/>
-                <use href="#sym-camera" x="1095" y="260"/>
-                <use href="#sym-water" x="975" y="195"/> <use href="#sym-socket" x="985" y="205"/>
-                <use href="#sym-socket" x="1070" y="170"/>
-                <use href="#sym-socket" x="915" y="50"/>
-                <use href="#sym-socket" x="945" y="15"/>
-                <use href="#sym-socket" x="965" y="15"/>
-                <use href="#sym-heater" x="995" y="75"/>
-                <use href="#sym-socket" x="980" y="40"/>
+                <!-- 符號引用 (添加提示) -->
+                <use href="#sym-panel" x="985" y="400"><title>總電箱</title></use>
+                <use href="#sym-switch" x="1090" y="380"><title>一鍵斷電開關</title></use>
+                <use href="#sym-camera" x="1095" y="260"><title>PoE 網路監視器</title></use>
+                <use href="#sym-water" x="975" y="195"><title>櫥下濾水器</title></use> 
                 
-                <use href="#sym-socket" x="1000" y="360"/>
-                <use href="#sym-socket" x="848" y="368"/>
-                <use href="#sym-socket" x="915" y="360"/> <use href="#sym-socket" x="930" y="360"/>
-                <use href="#sym-socket" x="535" y="365"/> <use href="#sym-network" x="555" y="365"/>
-                <use href="#sym-socket" x="300" y="350"/>
-                <use href="#sym-socket" x="130" y="310"/>
-
-                <use href="#sym-socket" x="395" y="15"/>
-                <use href="#sym-socket" x="450" y="60"/>
-                <use href="#sym-socket" x="635" y="15"/>
-                <use href="#sym-socket" x="655" y="15"/>
-                <use href="#sym-socket" x="755" y="15"/>
-                <use href="#sym-socket" x="105" y="15"/>
-                <use href="#sym-socket" x="390" y="15"/>
-                <use href="#sym-switch" x="170" y="20"/> <use href="#sym-socket" x="185" y="20"/>
-                <use href="#sym-switch" x="300" y="20"/> <use href="#sym-socket" x="285" y="20"/>
-                <use href="#sym-switch" x="380" y="130"/>
-
-                <use href="#sym-socket" x="25" y="320"/>
-                <use href="#sym-socket" x="25" y="180"/>
-                <use href="#sym-socket" x="35" y="270"/>
+                <!-- 插座群組 -->
+                <g>
+                    <use href="#sym-socket" x="985" y="205"/> <use href="#sym-socket" x="1070" y="170"/>
+                    <use href="#sym-socket" x="915" y="50"/> <use href="#sym-socket" x="945" y="15"/>
+                    <use href="#sym-socket" x="965" y="15"/> <use href="#sym-heater" x="995" y="75"/>
+                    <use href="#sym-socket" x="980" y="40"/> <use href="#sym-socket" x="1000" y="360"/>
+                    <use href="#sym-socket" x="848" y="368"/> <use href="#sym-socket" x="915" y="360"/> 
+                    <use href="#sym-socket" x="930" y="360"/> <use href="#sym-socket" x="535" y="365"/> 
+                    <use href="#sym-network" x="555" y="365"/> <use href="#sym-socket" x="280" y="350"/>
+                    <use href="#sym-socket" x="200" y="330"/> <use href="#sym-socket" x="395" y="15"/>
+                    <use href="#sym-socket" x="450" y="60"/> <use href="#sym-socket" x="635" y="15"/>
+                    <use href="#sym-socket" x="655" y="15"/> <use href="#sym-socket" x="755" y="15"/>
+                    <use href="#sym-socket" x="105" y="15"/> <use href="#sym-socket" x="390" y="15"/>
+                    <use href="#sym-switch" x="170" y="20"/> <use href="#sym-socket" x="185" y="20"/>
+                    <use href="#sym-switch" x="300" y="20"/> <use href="#sym-socket" x="285" y="20"/>
+                    <use href="#sym-switch" x="380" y="130"/> <use href="#sym-socket" x="25" y="320"/>
+                    <use href="#sym-socket" x="25" y="180"/> <use href="#sym-socket" x="35" y="270"/>
+                </g>
             </g>
 
             <!-- ================= 全域無重疊指引線層 (100%零交叉保證) ================= -->
-            <g id="layer-global-leaders">
+            <g id="layer-global-leaders" class="svg-layer active">
                 
-                <!-- 【右側軌道 Right Lane】 -->
-                <polyline points="945,15 1130,-80 1145,-80" class="leader-line"/>
-                <text x="1155" y="-80" class="label-text" fill="#d35400" text-anchor="start">智能鏡電源</text>
+                <!-- 【壓縮魔法】：將所有獨立的 <polyline> 合併為一條 <path>，效能與容量大提升 -->
+                <path class="leader-line" d="
+                    M945,15 L1130,-80 L1145,-80 M965,15 L1130,-55 L1145,-55 M980,40 L1130,-30 L1145,-30 
+                    M995,75 L1130,-5 L1145,-5 M870,78 L870,20 L1130,20 L1145,20 M1085,20 L1130,45 L1145,45 
+                    M980,70 L1130,70 L1145,70 M1030,50 L1130,95 L1145,95 M915,50 L1130,120 L1145,120 
+                    M1070,140 L1130,170 L1145,170 M996,157 L1130,195 L1145,195 M1070,170 L1130,220 L1145,220 
+                    M975,195 L1130,245 L1145,245 M1095,260 L1130,270 L1145,270 M1090,380 L1130,295 L1145,295 
+                    M200,45 L150,480 M280,350 L340,480 M422,380 L440,480 M535,340 L550,480 
+                    M545,365 L680,480 M848,368 L800,480 M922,360 L920,480 M985,400 L1040,480 
+                    M225,340 L210,520 M280,365 L310,520 M480,277 L480,520 M580,380 L590,520 
+                    M620,105 L720,520 M848,365 L850,520 M915,380 L960,520 M985,380 L1080,520 
+                    M234,150 L180,560 M200,330 L270,560 M340,360 L370,560 M250,375 L460,560 
+                    M1000,360 L1000,560 M129,365 L110,600 M395,15 L395,-70 M450,60 L450,-70 
+                    M635,15 L635,-70 M755,15 L755,-70 M170,20 L170,-70 M300,20 L300,-70 
+                    M655,15 L655,-100 M380,130 L380,-100 L365,-100 M540,15 L540,-100 M925,165 L925,-110 L880,-110 
+                    M244,160 L244,-100 M124,22 L124,-130 M720,40 L720,-130 M105,15 L105,-130 
+                    M390,15 L390,-130 M972,175 L972,-140 L880,-140 M392,130 L392,-170 L360,-170 M975,165 L975,-170 L880,-170 
+                    M90,135 L60,135 L-20,100 L-30,100 M15,225 L-20,160 L-30,160 M25,320 L-20,210 L-30,210 
+                    M25,180 L-20,260 L-30,260 M35,270 L-20,310 L-30,310 M47,315 L-20,360 L-30,360 M50,380 L-20,410 L-30,410
+                "/>
 
-                <polyline points="965,15 1130,-55 1145,-55" class="leader-line"/>
-                <text x="1155" y="-55" class="label-text" fill="#d35400" text-anchor="start">吹風機專用插座</text>
+                <!-- 依顏色與對齊方式對文字進行分群 (移除冗餘屬性) -->
+                <!-- 右側標示群 (Start) -->
+                <g class="label-text" text-anchor="start">
+                    <g fill="#d35400">
+                        <text x="1155" y="-80">智能鏡電源</text> <text x="1155" y="-55">吹風機專用插座</text>
+                        <text x="1155" y="-5">五合一暖風機</text> <text x="1155" y="120">免治馬桶座</text>
+                        <text x="1155" y="220">IH爐 (220V)</text> <text x="1155" y="295">一鍵斷電開關</text>
+                    </g>
+                    <g fill="#5c5046">
+                        <text x="1155" y="20">🌟 衛浴懸吊橫拉門</text> <text x="1155" y="95">半高矮牆+玻璃 (無門)</text>
+                        <text x="1155" y="195">15cm 共用水牆</text>
+                    </g>
+                    <g fill="var(--color-exhaust)">
+                        <text x="1155" y="70">衛浴暖風排氣</text> <text x="1155" y="170">獨立廚房排煙</text>
+                    </g>
+                    <text x="1155" y="-30" fill="var(--elec-panel)">220V 熱水器迴路</text>
+                    <text x="1155" y="45" fill="#636e72">大樓管道間</text>
+                    <text x="1155" y="245" fill="#00cec9">櫥下濾水器</text>
+                    <text x="1155" y="270" fill="#8e44ad">PoE監視器</text>
+                </g>
 
-                <polyline points="980,40 1130,-30 1145,-30" class="leader-line"/>
-                <text x="1155" y="-30" class="label-text" fill="var(--elec-panel)" text-anchor="start">220V 熱水器迴路</text>
+                <!-- 中間與下方標示群 (Middle) -->
+                <g class="label-text" text-anchor="middle">
+                    <g fill="#5c5046">
+                        <text x="150" y="490">床頭上櫃</text> <text x="440" y="490">書櫃</text>
+                        <text x="310" y="530">系統大衣櫃</text> <text x="480" y="530">65" OLED</text>
+                        <text x="590" y="530">電視長櫃</text> <text x="720" y="530">沙發床展開</text>
+                        <text x="850" y="530">LG 冰箱</text> <text x="960" y="530">家電櫃</text>
+                        <text x="1080" y="530">穿鞋椅鞋櫃</text> <text x="180" y="570">Queen Size床</text>
+                        <text x="110" y="610">🌟 行李箱收納櫃 (內建)</text>
+                        <text x="540" y="-110">沙發背櫃</text> <text x="124" y="-140">化妝台</text>
+                        <text x="720" y="-140">NORDEN 桌</text> <text x="360" y="-170">🌟 長虹玻璃拉門</text>
+                    </g>
+                    <g fill="#d35400">
+                        <text x="340" y="490">衣櫃除濕棒</text> <text x="800" y="490">冰箱插座</text>
+                        <text x="920" y="490">家電雙迴路</text> <text x="270" y="570">衣櫃感應燈電源</text>
+                        <text x="1000" y="570">鞋櫃掃地機</text> <text x="395" y="-80">沙發左側</text>
+                        <text x="450" y="-80">沙發中側</text> <text x="635" y="-80">沙發右側</text>
+                        <text x="755" y="-80">餐桌插座</text> <text x="170" y="-80">雙切+TypeC</text>
+                        <text x="300" y="-80">雙切+TypeC</text> <text x="655" y="-110">餐桌插座</text>
+                        <text x="365" y="-110">門口雙切</text> <text x="105" y="-140">主臥智慧窗簾</text>
+                        <text x="390" y="-140">客廳智慧窗簾</text>
+                    </g>
+                    <g fill="var(--mep-ac)">
+                        <text x="550" y="490">客廳冷氣</text> <text x="210" y="530">主臥冷氣</text>
+                    </g>
+                    <text x="680" y="490" fill="#8e44ad">電視網路總成</text>
+                    <text x="1040" y="490" fill="var(--elec-panel)">總電箱</text>
+                    <text x="370" y="570" fill="#8c7f75">H=2.6m假樑</text>
+                    <text x="460" y="570" fill="var(--orig-beam)">原始結構大樑</text>
+                    <text x="244" y="-110" fill="#8c7f75">H=2.8m 挑高區</text>
+                </g>
 
-                <polyline points="995,75 1130,-5 1145,-5" class="leader-line"/>
-                <text x="1155" y="-5" class="label-text" fill="#d35400" text-anchor="start">五合一暖風機</text>
-
-                <polyline points="870,78 870,20 1130,20 1145,20" class="leader-line"/>
-                <text x="1155" y="20" class="label-text" fill="#5c5046" text-anchor="start">衛浴懸吊橫拉門</text>
-
-                <polyline points="1085,20 1130,45 1145,45" class="leader-line"/>
-                <text x="1155" y="45" class="label-text" fill="#636e72" text-anchor="start">大樓管道間</text>
-
-                <polyline points="980,70 1130,70 1145,70" class="leader-line"/>
-                <text x="1155" y="70" class="label-text" fill="var(--color-exhaust)" text-anchor="start">衛浴暖風排氣</text>
-
-                <polyline points="1030,50 1130,95 1145,95" class="leader-line"/>
-                <text x="1155" y="95" class="label-text" fill="#5c5046" text-anchor="start">半高矮牆+玻璃 (無門)</text>
-
-                <polyline points="915,50 1130,120 1145,120" class="leader-line"/>
-                <text x="1155" y="120" class="label-text" fill="#d35400" text-anchor="start">免治馬桶座</text>
-
-                <polyline points="1070,140 1130,170 1145,170" class="leader-line"/>
-                <text x="1155" y="170" class="label-text" fill="var(--color-exhaust)" text-anchor="start">獨立廚房排煙</text>
-
-                <polyline points="996,157 1130,195 1145,195" class="leader-line"/>
-                <text x="1155" y="195" class="label-text" fill="#5c5046" text-anchor="start">15cm 共用水牆</text>
-
-                <polyline points="1070,170 1130,220 1145,220" class="leader-line"/>
-                <text x="1155" y="220" class="label-text" fill="#d35400" text-anchor="start">IH爐 (220V)</text>
-
-                <polyline points="975,195 1130,245 1145,245" class="leader-line"/>
-                <text x="1155" y="245" class="label-text" fill="#00cec9" text-anchor="start">櫥下濾水器</text>
-
-                <polyline points="1095,260 1130,270 1145,270" class="leader-line"/>
-                <text x="1155" y="270" class="label-text" fill="#8e44ad" text-anchor="start">PoE監視器</text>
-
-                <polyline points="1090,380 1130,295 1145,295" class="leader-line"/>
-                <text x="1155" y="295" class="label-text" fill="#d35400" text-anchor="start">一鍵斷電開關</text>
-
-
-                <!-- 【下方軌道 Bottom Lane】 -->
-                <!-- Row 1: y=490 -->
-                <polyline points="200,45 150,480 150,480" class="leader-line"/>
-                <text x="150" y="490" class="label-text" fill="#5c5046" text-anchor="middle">床頭上櫃</text>
-
-                <polyline points="280,350 340,480" class="leader-line"/>
-                <text x="340" y="490" class="label-text" fill="#d35400" text-anchor="middle">衣櫃除濕棒</text>
-
-                <polyline points="422,380 440,480" class="leader-line"/>
-                <text x="440" y="490" class="label-text" fill="#5c5046" text-anchor="middle">書櫃</text>
-
-                <polyline points="535,340 550,480" class="leader-line"/>
-                <text x="550" y="490" class="label-text" fill="var(--mep-ac)" text-anchor="middle">客廳冷氣</text>
-
-                <polyline points="545,365 680,480" class="leader-line"/>
-                <text x="680" y="490" class="label-text" fill="#8e44ad" text-anchor="middle">電視網路總成</text>
-
-                <polyline points="848,368 800,480" class="leader-line"/>
-                <text x="800" y="490" class="label-text" fill="#d35400" text-anchor="middle">冰箱插座</text>
-
-                <polyline points="922,360 920,480" class="leader-line"/>
-                <text x="920" y="490" class="label-text" fill="#d35400" text-anchor="middle">家電雙迴路</text>
-
-                <polyline points="985,400 1040,480" class="leader-line"/>
-                <text x="1040" y="490" class="label-text" fill="var(--elec-panel)" text-anchor="middle">總電箱</text>
-
-                <!-- Row 2: y=530 -->
-                <polyline points="225,340 210,520" class="leader-line"/>
-                <text x="210" y="530" class="label-text" fill="var(--mep-ac)" text-anchor="middle">主臥冷氣</text>
-
-                <polyline points="280,365 310,520" class="leader-line"/>
-                <text x="310" y="530" class="label-text" fill="#5c5046" text-anchor="middle">系統大衣櫃</text>
-
-                <polyline points="480,277 480,520" class="leader-line"/>
-                <text x="480" y="530" class="label-text" fill="#5c5046" text-anchor="middle">65" OLED</text>
-
-                <polyline points="580,380 590,520" class="leader-line"/>
-                <text x="590" y="530" class="label-text" fill="#5c5046" text-anchor="middle">電視長櫃</text>
-
-                <polyline points="620,105 720,520" class="leader-line"/>
-                <text x="720" y="530" class="label-text" fill="#5c5046" text-anchor="middle">沙發床展開</text>
-
-                <polyline points="848,365 850,520" class="leader-line"/>
-                <text x="850" y="530" class="label-text" fill="#5c5046" text-anchor="middle">LG 冰箱</text>
-
-                <polyline points="915,380 960,520" class="leader-line"/>
-                <text x="960" y="530" class="label-text" fill="#5c5046" text-anchor="middle">家電櫃</text>
-
-                <polyline points="985,380 1080,520" class="leader-line"/>
-                <text x="1080" y="530" class="label-text" fill="#5c5046" text-anchor="middle">鞋櫃</text>
-
-                <!-- Row 3: y=570 -->
-                <polyline points="234,150 180,560" class="leader-line"/>
-                <text x="180" y="570" class="label-text" fill="#5c5046" text-anchor="middle">Queen Size床</text>
-
-                <polyline points="200,330 270,560" class="leader-line"/>
-                <text x="270" y="570" class="label-text" fill="#d35400" text-anchor="middle">衣櫃感應燈電源</text>
-
-                <polyline points="340,360 370,560" class="leader-line"/>
-                <text x="370" y="570" class="label-text" fill="#8c7f75" text-anchor="middle">H=2.6m假樑</text>
-
-                <polyline points="250,375 250,560 460,560" class="leader-line"/>
-                <text x="460" y="570" class="label-text" fill="var(--orig-beam)" text-anchor="middle">原始結構大樑</text>
-
-                <polyline points="1000,360 1000,560" class="leader-line"/>
-                <text x="1000" y="570" class="label-text" fill="#d35400" text-anchor="middle">鞋櫃掃地機</text>
-                
-                <!-- Row 4: y=610 (確保行李箱櫃標示不干涉) -->
-                <polyline points="129,365 110,600" class="leader-line"/>
-                <text x="110" y="610" class="label-text" fill="#5c5046" text-anchor="middle">行李箱收納櫃 (內建)</text>
-
-
-                <!-- 【上方軌道 Top Lane】 -->
-                <polyline points="395,15 395,-70" class="leader-line"/>
-                <text x="395" y="-80" class="label-text" fill="#d35400" text-anchor="middle">沙發左側</text>
-
-                <polyline points="450,60 450,-70" class="leader-line"/>
-                <text x="450" y="-80" class="label-text" fill="#d35400" text-anchor="middle">沙發中側</text>
-
-                <polyline points="635,15 635,-70" class="leader-line"/>
-                <text x="635" y="-80" class="label-text" fill="#d35400" text-anchor="middle">沙發右側</text>
-
-                <polyline points="755,15 755,-70" class="leader-line"/>
-                <text x="755" y="-80" class="label-text" fill="#d35400" text-anchor="middle">餐桌插座</text>
-
-                <polyline points="170,20 170,-70" class="leader-line"/>
-                <text x="170" y="-80" class="label-text" fill="#d35400" text-anchor="middle">雙切+TypeC</text>
-
-                <polyline points="300,20 300,-70" class="leader-line"/>
-                <text x="300" y="-80" class="label-text" fill="#d35400" text-anchor="middle">雙切+TypeC</text>
-
-                <polyline points="655,15 655,-100" class="leader-line"/>
-                <text x="655" y="-110" class="label-text" fill="#d35400" text-anchor="middle">餐桌插座</text>
-
-                <polyline points="380,130 380,-100 365,-100" class="leader-line"/>
-                <text x="365" y="-110" class="label-text" fill="#d35400" text-anchor="middle">門口雙切</text>
-
-                <polyline points="540,15 540,-100" class="leader-line"/>
-                <text x="540" y="-110" class="label-text" fill="#5c5046" text-anchor="middle">沙發背櫃</text>
-
-                <polyline points="925,165 925,-110 880,-110" class="leader-line"/>
-                <text x="880" y="-110" class="label-text" fill="#5c5046" text-anchor="end">延伸備餐檯</text>
-
-                <polyline points="244,160 244,-100" class="leader-line"/>
-                <text x="244" y="-110" class="label-text" fill="#8c7f75" text-anchor="middle">H=2.8m 挑高區</text>
-
-                <polyline points="124,22 124,-130" class="leader-line"/>
-                <text x="124" y="-140" class="label-text" fill="#5c5046" text-anchor="middle">化妝台</text>
-
-                <polyline points="720,40 720,-130" class="leader-line"/>
-                <text x="720" y="-140" class="label-text" fill="#5c5046" text-anchor="middle">NORDEN 桌</text>
-
-                <polyline points="105,15 105,-130" class="leader-line"/>
-                <text x="105" y="-140" class="label-text" fill="#d35400" text-anchor="middle">主臥智慧窗簾</text>
-
-                <polyline points="390,15 390,-130" class="leader-line"/>
-                <text x="390" y="-140" class="label-text" fill="#d35400" text-anchor="middle">客廳智慧窗簾</text>
-
-                <polyline points="972,175 972,-140 880,-140" class="leader-line"/>
-                <text x="880" y="-140" class="label-text" fill="#5c5046" text-anchor="end">日系大單槽</text>
-
-                <polyline points="392,130 392,-170 360,-170" class="leader-line"/>
-                <text x="360" y="-170" class="label-text" fill="#5c5046" text-anchor="middle">長虹玻璃拉門</text>
-
-                <polyline points="975,165 975,-170 880,-170" class="leader-line"/>
-                <text x="880" y="-170" class="label-text" fill="#f1c40f" text-anchor="end">廚房櫥下照明</text>
-
-                <!-- 【左側軌道 Left Lane】 -->
-                <polyline points="90,135 60,135 -20,100 -30,100" class="leader-line"/>
-                <text x="-40" y="100" class="label-text" fill="#5c5046" text-anchor="end">落地玻璃拉門 (引入採光)</text>
-
-                <polyline points="15,225 -20,160 -30,160" class="leader-line"/>
-                <text x="-40" y="160" class="label-text" fill="var(--mep-ac)" text-anchor="end">室外機疊放處</text>
-                
-                <polyline points="25,320 -20,210 -30,210" class="leader-line"/>
-                <text x="-40" y="210" class="label-text" fill="#d35400" text-anchor="end">新風機電源</text>
-
-                <polyline points="25,180 -20,260 -30,260" class="leader-line"/>
-                <text x="-40" y="260" class="label-text" fill="#d35400" text-anchor="end">室外機 220V</text>
-
-                <polyline points="35,270 -20,310 -30,310" class="leader-line"/>
-                <text x="-40" y="310" class="label-text" fill="#d35400" text-anchor="end">洗脫烘迴路</text>
-
-                <polyline points="47,315 -20,360 -30,360" class="leader-line"/>
-                <text x="-40" y="360" class="label-text" fill="#5c5046" text-anchor="end">洗衣機</text>
-
-                <polyline points="50,380 -20,410 -30,410" class="leader-line"/>
-                <text x="-40" y="410" class="label-text" fill="var(--pipe-cold)" text-anchor="end">陽台冷水管線</text>
+                <!-- 左側與特定靠右標示群 (End) -->
+                <g class="label-text" text-anchor="end">
+                    <g fill="#5c5046">
+                        <text x="880" y="-110">🌟 延伸備餐檯</text> <text x="880" y="-140">🌟 日系大單槽</text>
+                        <text x="-40" y="100">🌟 落地玻璃拉門 (引入採光)</text> <text x="-40" y="360">洗衣機</text>
+                    </g>
+                    <g fill="#d35400">
+                        <text x="-40" y="210">新風機電源</text> <text x="-40" y="260">室外機 220V</text>
+                        <text x="-40" y="310">洗脫烘迴路</text>
+                    </g>
+                    <text x="880" y="-170" fill="#f1c40f">🌟 廚房櫥下照明</text>
+                    <text x="-40" y="160" fill="var(--mep-ac)">室外機疊放處</text>
+                    <text x="-40" y="410" fill="var(--pipe-cold)">陽台冷水管線</text>
+                </g>
             </g>
 
         </svg>
-    </div>
+    </main>
 
     <script>
+        // 將圖例資料獨立存放，方便管理
         const legends = {
             masonry: `
                 <div class="legend-item"><div class="legend-box" style="background: var(--wall-color);"></div>建築主牆</div>
                 <div class="legend-item"><div class="legend-box" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'20\\' height=\\'20\\'><line x1=\\'0\\' y1=\\'0\\' x2=\\'20\\' y2=\\'20\\' stroke=\\'%23a09388\\' stroke-width=\\'2\\'/></svg>');"></div>大樑位置</div>
                 <div class="legend-item"><div class="legend-box" style="background: var(--wet-wall);"></div>15cm 灌漿牆</div>
-                <div class="legend-item"><div class="legend-line" style="background: #a09388;"></div>懸吊橫拉門</div>
-                <div class="legend-item"><div class="legend-box" style="background: #e0e0e0; border: 2px solid #b0a092; position:relative;"><div style="position:absolute; left:0; top:0; bottom:0; width:50%; background:rgba(255,255,255,0.6);"></div></div>玻璃拉門/隔間</div>
+                <div class="legend-item"><div class="legend-line" style="background: #a09388; width: 20px; height: 3px; margin-right: 8px;"></div>🌟 懸吊橫拉門</div>
+                <div class="legend-item"><div class="legend-box" style="background: #e0e0e0; border: 2px solid #b0a092; position:relative;"><div style="position:absolute; left:0; top:0; bottom:0; width:50%; background:rgba(255,255,255,0.6);"></div></div>🌟 玻璃拉門/隔間</div>
             `,
             mep: `
-                <div class="legend-item"><div class="legend-line" style="background: var(--pipe-cold);"></div>冷水/冷媒/排水</div>
-                <div class="legend-item"><div class="legend-line" style="background: var(--pipe-hot);"></div>極短熱水管 (免跨室)</div>
+                <div class="legend-item"><div class="legend-line" style="background: var(--pipe-cold); width: 20px; height: 3px; margin-right: 8px;"></div>冷水/冷媒/排水</div>
+                <div class="legend-item"><div class="legend-line" style="background: var(--pipe-hot); width: 20px; height: 3px; margin-right: 8px;"></div>極短熱水管 (免跨室)</div>
                 <div class="legend-item"><div class="legend-box" style="background: var(--mep-ac);"></div>冷氣設備 (移至大樑側)</div>
                 <div class="legend-item"><div class="legend-box" style="background: var(--color-exhaust);"></div>排氣設備 (直通戶外)</div>
                 <div class="legend-item"><div style="color: var(--color-airflow); font-size: 16px; margin-right: 5px;">➔</div>正壓換氣方向</div>
             `,
             ceiling: `
-                <div class="legend-item"><div class="legend-box" style="background: var(--ceil-28);"></div>H=2.8m 原始挑高</div>
+                <div class="legend-item"><div class="legend-box" style="background: var(--ceil-28); border: 1px solid #ccc;"></div>H=2.8m 原始挑高</div>
                 <div class="legend-item"><div class="legend-box" style="background: var(--ceil-26);"></div>H=2.6m 木作包覆假樑</div>
                 <div class="legend-item"><div class="legend-box" style="background: var(--ceil-24);"></div>H=2.4m 廚衛平釘</div>
                 <div class="legend-item"><svg class="legend-icon"><circle cx="10" cy="10" r="6" fill="none" stroke="#3498db" stroke-width="2"/><circle cx="10" cy="10" r="2" fill="#3498db"/></svg> 主燈 / 嵌燈</div>
             `,
             cabinetry: `
                 <div class="legend-item"><div class="legend-box" style="background: var(--furn-wood-dark);"></div>系統木作櫃體</div>
-                <div class="legend-item"><div class="legend-box" style="background: var(--furn-wardrobe);"></div>內建行李箱櫃</div>
-                <div class="legend-item"><div class="legend-box" style="background: var(--furn-kitchen);"></div>延伸單槽廚具</div>
+                <div class="legend-item"><div class="legend-box" style="background: var(--furn-wardrobe);"></div>🌟 內建行李箱櫃</div>
+                <div class="legend-item"><div class="legend-box" style="background: var(--furn-kitchen);"></div>🌟 延伸單槽廚具</div>
+                <div class="legend-item"><div class="legend-box" style="background: var(--furn-wood);"></div>🌟 迎賓穿鞋椅</div>
                 <div class="legend-item"><div class="legend-box" style="background: #111; border-radius:2px;"></div>音響 (Soundbar)</div>
                 <div class="legend-item"><div class="legend-box" style="background: var(--tv-screen); border: 1px solid var(--tv-frame);"></div>OLED 電視</div>
             `,
@@ -617,101 +619,64 @@
                 <div class="legend-item"><svg class="legend-icon"><rect x="4" y="4" width="12" height="12" rx="2" fill="#e74c3c"/></svg> 110/220V 插座</div>
                 <div class="legend-item"><svg class="legend-icon"><polygon points="10,3 17,15 3,15" fill="#8e44ad"/></svg> 弱電/監視器</div>
                 <div class="legend-item"><svg class="legend-icon"><path d="M10,4 Q15,10 15,14 A5,5 0 0 1 5,14 Q5,10 10,4 Z" fill="#00cec9"/></svg> 濾水器</div>
-                <div class="legend-item"><svg class="legend-icon"><line x1="0" y1="10" x2="20" y2="10" stroke="#f1c40f" stroke-width="4" stroke-dasharray="4,2"/></svg> 飯店級 LED 線燈</div>
+                <div class="legend-item"><svg class="legend-icon"><line x1="0" y1="10" x2="20" y2="10" stroke="#f1c40f" stroke-width="4" stroke-dasharray="4,2"/></svg> 🌟 飯店級 LED 線燈</div>
                 <div class="legend-item"><svg class="legend-icon"><rect x="4" y="2" width="12" height="16" fill="#fff" stroke="#c0392b" stroke-width="2"/><line x1="4" y1="2" x2="16" y2="18" stroke="#c0392b" stroke-width="1.5"/></svg> 總電箱 (配電盤)</div>
             `,
             all: `
                 <div class="legend-item"><div class="legend-box" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'10\\' height=\\'10\\'><line x1=\\'0\\' y1=\\'0\\' x2=\\'10\\' y2=\\'10\\' stroke=\\'%23a09388\\' stroke-width=\\'2\\'/></svg>');"></div>原始大樑</div>
-                <div class="legend-item"><div class="legend-box" style="background: var(--furn-wardrobe);"></div>內建行李箱區</div>
-                <div class="legend-item"><svg class="legend-icon"><line x1="0" y1="10" x2="20" y2="10" stroke="#f1c40f" stroke-width="4" stroke-dasharray="4,2"/></svg> 櫥下照明與線燈</div>
+                <div class="legend-item"><svg class="legend-icon"><line x1="0" y1="10" x2="20" y2="10" stroke="#f1c40f" stroke-width="4" stroke-dasharray="4,2"/></svg> 🌟 全室 LED 線燈</div>
                 <div class="legend-item"><svg class="legend-icon"><line x1="2" y1="10" x2="18" y2="10" stroke="#a39486" stroke-width="1.5" stroke-dasharray="4,4"/></svg> 絕對零重疊指引線</div>
             `
         };
 
-        const layers = ['masonry', 'mep', 'ceiling', 'cabinetry', 'furniture', 'electrical', 'global-leaders'];
-        const layerElements = Object.fromEntries(
-            layers.map(layer => [layer, document.getElementById('layer-' + layer)]).filter(([, el]) => el)
-        );
-        const tabsElement = document.getElementById('tabs');
-        const tabButtons = tabsElement.querySelectorAll('.tab-btn');
         const svgElement = document.getElementById('master-svg');
         const legendContainer = document.getElementById('legend');
-        const TRANSITION_MS = 300;
-        const LEGEND_FADE_MS = 200;
-        const hideTimers = new Map();
-        let legendTimer = null;
-        let currentLayer = 'all';
+        const allLayers = document.querySelectorAll('.svg-layer');
 
+        // 初始化圖例
         updateLegend('all');
 
-        tabsElement.addEventListener('click', function(e) {
-            const button = e.target.closest('.tab-btn');
-            if(button) {
-                const selectedLayer = button.getAttribute('data-layer');
-                if (!selectedLayer || selectedLayer === currentLayer) return;
-                currentLayer = selectedLayer;
+        // 事件委派處理 Tabs 切換 (取代多餘的 event listeners)
+        document.getElementById('tabs').addEventListener('click', function(e) {
+            const targetBtn = e.target.closest('.tab-btn');
+            if(!targetBtn) return;
 
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
+            // 1. 更新按鈕狀態與無障礙標籤 (A11y)
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            targetBtn.classList.add('active');
+            targetBtn.setAttribute('aria-selected', 'true');
 
-                if (selectedLayer === 'all') {
-                    svgElement.classList.add('mode-all');
-                    Object.values(layerElements).forEach(showLayer);
-                } else {
-                    svgElement.classList.remove('mode-all');
-                    Object.entries(layerElements).forEach(([layer, el]) => {
-                        if (layer === selectedLayer) {
-                            showLayer(el);
-                        } else {
-                            hideLayer(layer, el);
-                        }
-                    });
-                }
+            const selectedLayer = targetBtn.getAttribute('data-layer');
 
-                updateLegend(selectedLayer);
+            // 2. 透過 CSS Class 切換圖層狀態，不再依賴 JavaScript setTimeout 控制渲染
+            if(selectedLayer === 'all') {
+                svgElement.classList.add('mode-all');
+                allLayers.forEach(el => el.classList.add('active'));
+            } else {
+                svgElement.classList.remove('mode-all');
+                allLayers.forEach(el => {
+                    if (el.id === 'layer-' + selectedLayer || el.id === 'layer-base') {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
             }
+
+            // 3. 更新圖例
+            updateLegend(selectedLayer);
         });
 
+        // 柔性更新圖例內容
         function updateLegend(mode) {
-            if (!legends[mode]) return;
-            if (legendTimer) {
-                clearTimeout(legendTimer);
-                legendTimer = null;
-            }
-
             legendContainer.style.opacity = '0';
-            legendTimer = setTimeout(() => {
-                if (legendContainer.innerHTML !== legends[mode]) {
-                    legendContainer.innerHTML = legends[mode];
-                }
+            setTimeout(() => {
+                legendContainer.innerHTML = legends[mode] || '';
                 legendContainer.style.opacity = '1';
-            }, LEGEND_FADE_MS);
-        }
-
-        function showLayer(el) {
-            if (!el) return;
-            const layerKey = el.id.replace('layer-', '');
-            const hideTimer = hideTimers.get(layerKey);
-            if (hideTimer) {
-                clearTimeout(hideTimer);
-                hideTimers.delete(layerKey);
-            }
-            el.style.display = 'inline';
-            requestAnimationFrame(() => { el.style.opacity = '1'; });
-        }
-
-        function hideLayer(layer, el) {
-            if (!el) return;
-            const pending = hideTimers.get(layer);
-            if (pending) {
-                clearTimeout(pending);
-            }
-            el.style.opacity = '0';
-            const timer = setTimeout(() => {
-                el.style.display = 'none';
-                hideTimers.delete(layer);
-            }, TRANSITION_MS);
-            hideTimers.set(layer, timer);
+            }, 200); // 配合 CSS transition
         }
     </script>
 </body>
