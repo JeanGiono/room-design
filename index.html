@@ -636,6 +636,8 @@
         const tabButtons = tabsElement.querySelectorAll('.tab-btn');
         const svgElement = document.getElementById('master-svg');
         const legendContainer = document.getElementById('legend');
+        const layerHideTimers = {};
+        let legendTimer = null;
         let currentLayer = 'all';
 
         updateLegend('all');
@@ -652,19 +654,21 @@
 
                 if (selectedLayer === 'all') {
                     svgElement.classList.add('mode-all');
-                    Object.values(layerElements).forEach((el) => {
+                    Object.entries(layerElements).forEach(([layer, el]) => {
+                        clearTimeout(layerHideTimers[layer]);
                         el.style.display = 'inline';
                         requestAnimationFrame(() => { el.style.opacity = '1'; });
                     });
                 } else {
                     svgElement.classList.remove('mode-all');
                     Object.entries(layerElements).forEach(([layer, el]) => {
+                        clearTimeout(layerHideTimers[layer]);
                         if (layer === selectedLayer) {
                             el.style.display = 'inline';
                             requestAnimationFrame(() => { el.style.opacity = '1'; });
                         } else {
                             el.style.opacity = '0';
-                            setTimeout(() => { el.style.display = 'none'; }, 300);
+                            layerHideTimers[layer] = setTimeout(() => { el.style.display = 'none'; }, 300);
                         }
                     });
                 }
@@ -675,7 +679,8 @@
 
         function updateLegend(mode) {
             legendContainer.style.opacity = '0';
-            setTimeout(() => {
+            clearTimeout(legendTimer);
+            legendTimer = setTimeout(() => {
                 legendContainer.innerHTML = legends[mode];
                 legendContainer.style.opacity = '1';
             }, 200);
